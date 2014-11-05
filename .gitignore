@@ -1,1 +1,5 @@
-git rm --cached -r .idea
+Twitter.py
+.idea/
+*.iml
+*.iws
+.DS_Store
