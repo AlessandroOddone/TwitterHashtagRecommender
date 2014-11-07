@@ -1,5 +1,2 @@
-Twitter.py
-.idea/
-*.iml
-*.iws
-.DS_Store
+Auth.py
+POS-tagging \[PROVA\].py

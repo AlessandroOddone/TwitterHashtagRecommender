@@ -2,16 +2,15 @@ from tweepy.streaming import StreamListener
 from tweepy import OAuthHandler
 from tweepy import Stream
 import langid
-
 from datetime import date
 from os.path import expanduser
 import csv
-import Twitter
+import Auth
 
 
-HASHTAGS_LIST = ['#dwts', '#glee', '#idol', '#xfactor', '#news', '#love', '#fashion', '#health', '#fail', '#jobs',
-                 '#business', '#sales', '#economy', '#marketing', '#socialmedia', '#startup', '#edtech', '#education',
-                 '#teachers', '#climate', '#solar', '#globalwarming', '#socialgood', '#cause', '#volunteer', '#4change']
+HASHTAGS_LIST = ['#dwts', '#glee', '#idol', '#xfactor', '#news', '#fashion', '#health', '#fail', '#jobs', '#business',
+                 '#sales', '#economy', '#marketing', '#socialmedia', '#startup', '#edtech', '#education', '#teachers',
+                 '#climate', '#solar', '#globalwarming', '#socialgood', '#cause', '#volunteer', '#4change']
 
 
 def is_retweet(status):
@@ -70,8 +69,8 @@ class Listener(StreamListener):
 
 
 if __name__ == '__main__':
-    auth = OAuthHandler(Twitter.CONSUMER_KEY, Twitter.CONSUMER_SECRET)
-    auth.set_access_token(Twitter.ACCESS_TOKEN, Twitter.ACCESS_TOKEN_SECRET)
+    auth = OAuthHandler(Auth.CONSUMER_KEY, Auth.CONSUMER_SECRET)
+    auth.set_access_token(Auth.ACCESS_TOKEN, Auth.ACCESS_TOKEN_SECRET)
     stream = Stream(auth, Listener())
     stream.filter(track=[','.join(HASHTAGS_LIST[i] for i in range(0, len(HASHTAGS_LIST)))])
 
