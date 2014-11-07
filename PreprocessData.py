@@ -40,7 +40,7 @@ def remove_hashtags(tweets):
         processed_tweets.append(' '.join(new_list))
     return processed_tweets
 
-#toglie parole come &34 etc
+#this method removes words like: &amp
 def remove_HTML_character(tweets):
     processed_tweets = []
     for tweet in tweets:
@@ -52,7 +52,7 @@ def remove_HTML_character(tweets):
         processed_tweets.append(' '.join(new_list))
     return processed_tweets
 
-#rimuove tag di altre persone @esempio
+#this method removes tags to other users, like: @AlessandroOddone
 def remove_user_tags(tweets):
     processed_tweets = []
     for tweet in tweets:
@@ -70,31 +70,52 @@ def only_ascii(c):
     else:
         return ''
 
-#rimangono le faccine
+#this method delete the punctuation, but many other non alphabetic characters remains
+#for this reason it is called shallow
 def remove_punctuation_shallow(tweets):
     processed_tweets = []
     for tweet in tweets:
             processed_tweets.append(tweet.translate(string.maketrans("",""), string.punctuation))
     return processed_tweets
 
-#rimuove tutto cio che non e uno spazio o una lettera dell alfabeto
+#this method removes every non alphabetic letter
 def remove_punctuation_deep(tweets):
     processed_tweets = []
     for tweet in tweets:
             processed_tweets.append(filter(only_ascii, tweet))
     return processed_tweets
 
-def process(tweets): #passare l'intera lista
+#this method removes the multiple space characters
+def remove_multiple_spaces(tweets):
+    processed_tweets = []
+    for tweet in tweets:
+        string_list = tweet.split(' ')
+        new_list = []
+        for element in string_list:
+                if not len(element) == 0:
+                        new_list.append(element)
+        processed_tweets.append(' '.join(new_list))
+    return processed_tweets
+
+#this method removes all the tweets that contains no text after the preprocessing phase
+def remove_empty_tweets(tweets, hashtags_read):
+    processed_tweets = []
+    for tweet in tweets:
+            processed_tweets.append(filter(only_ascii, tweet))
+    return processed_tweets
+
+def process(tweets, hashtags_read):
     tweets = remove_hashtags(tweets)
     tweets = remove_HTML_character(tweets)
     tweets = remove_user_tags(tweets)
-    #togliere eventuali spazi ripetuti
     tweets = remove_punctuation_deep(tweets)
+    tweets = remove_multiple_spaces(tweets)
+    tweets = remove_empty_tweets(tweets, hashtags_read)
     return tweets
 
 if __name__ == '__main__':
     tweets_read = []
     hashtags_read = []
     read_file()
-    tweets_processed = process(tweets_read)
+    tweets_processed = process(tweets_read, hashtags_read)
     write_file(tweets_processed, hashtags_read)
