@@ -45,7 +45,7 @@ def add_to_database(status, hashtags):
     home = expanduser("~")
     path_to_file = "/Desktop/NLP Project/"
     file_name = "tweets.csv"
-    text = ' '.join(status.text.strip().replace('\n', ' ').split()).encode('utf-8')
+    text = ' '.join(status.text.replace('\n', ' ').split()).encode('utf-8')
     rows = []
     for hashtag in hashtags:
         for h in HASHTAGS_LIST:
