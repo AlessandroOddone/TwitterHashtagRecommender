@@ -73,6 +73,8 @@ def remove_punctuation_shallow(tweet):
 
 #filter out all symbols and punctuation except apostrophes
 def filter_symbols(char):
+    if ord(char) == 145 or ord(char) == 146:
+        return ' '
     if ord(char) in range(65, 91) or ord(char) in range(97, 123) or char == ' ' or char == '\'':
         return char
     else:
