@@ -78,7 +78,7 @@ def filter_symbols(char):
     if ord(char) in range(65, 91) or ord(char) in range(97, 123) or char == ' ' or char == '\'':
         return char
     else:
-        return ''
+        return ' '
 
 
 #remove all non-alphabetic characters
@@ -163,6 +163,7 @@ def process(data):
     t2 = BigramTagger(train=treebank.tagged_sents(), backoff=t1)
     for tweet in data.get_tweets():
         tweet = remove_hashtags(tweet)
+        tweet = remove_user_tags(tweet)
         tweet = remove_html_entities(tweet)
         tweet = remove_user_tags(tweet)
         tweet = remove_punctuation_deep(tweet)
