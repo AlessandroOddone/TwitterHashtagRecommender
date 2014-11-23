@@ -44,7 +44,8 @@ def is_english(status):
 def add_to_database(status, hashtags):
     home = expanduser("~")
     path_to_file = "/Desktop/NLP Project/"
-    file_name = "tweets.csv"
+    #file_name = "tweets.csv"
+    file_name = "validation_tweets.csv"
     text = ' '.join(status.text.replace('\n', ' ').split()).encode('utf-8')
     rows = []
     for hashtag in hashtags:
@@ -60,8 +61,8 @@ class Listener(StreamListener):
     def on_status(self, status):
         hashtags = [hashtag['text'] for hashtag in status.entities['hashtags']]
         if hashtags and is_english(status) and not is_retweet(status) and not is_spam(status):
-            print "--------------------------------------"
-            print "**TWEET**: " + status.text.strip() + "\n" + "**HASHTAGS**: " + ', '.join(hashtags)
+            print ("--------------------------------------")
+            print ("**TWEET**: " + status.text.strip() + "\n" + "**HASHTAGS**: " + ', '.join(hashtags))
             add_to_database(status, hashtags)
 
     def on_error(self, status):
