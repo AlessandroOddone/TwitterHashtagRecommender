@@ -1,6 +1,6 @@
 import nltk
 from sklearn import cross_validation
-from sklearn.svm import LinearSVC
+from sklearn.svm import SVC
 from sklearn.linear_model import LogisticRegression
 from sklearn import metrics
 import pickle
@@ -51,15 +51,14 @@ def train_model(tweets, hashtags):
     k = 0
     for traincv, testcv in cv:
         #classifier = nltk.NaiveBayesClassifier.train(train_set[traincv[0]:traincv[len(traincv)-1]])
-        #classifier = nltk.MaxentClassifier.train(train_set[traincv[0]:traincv[len(traincv)-1]], max_iter=50)
+        classifier = nltk.MaxentClassifier.train(train_set[traincv[0]:traincv[len(traincv)-1]], max_iter=50)
         #classifier = nltk.SklearnClassifier(LogisticRegression()).train(train_set[traincv[0]:traincv[len(traincv)-1]])
-        classifier = nltk.SklearnClassifier(LinearSVC()).train(train_set[traincv[0]:traincv[len(traincv)-1]])
+        #classifier = nltk.SklearnClassifier(SVC(kernel='linear', probability=True)).train(train_set[traincv[0]:traincv[len(traincv)-1]])
 
         y_true = []
         y_pred = []
         for i in range(len(testcv)):
             y_true.append(train_set[testcv[i]][1])
-            print(train_set[testcv[i]][0])
             y_pred.append(classifier.classify(train_set[testcv[i]][0]))
 
         acc = metrics.accuracy_score(y_true, y_pred)
@@ -71,7 +70,7 @@ def train_model(tweets, hashtags):
         print('predicted labels: ' + str(y_pred))
         print('')
     print ('ACCURACY: ' + str(sum_accuracy/k))
-    classifier.train(train_set)
+    classifier.train(train_set, max_iter=100)
     return classifier
 
 

@@ -6,17 +6,22 @@ from nltk.corpus import stopwords, treebank
 from nltk import BigramTagger, UnigramTagger, AffixTagger
 
 
+HASHTAGS_LIST = ['#dwts', '#glee', '#idol', '#xfactor', '#news', '#fashion', '#health', '#fail', '#jobs', '#business',
+                 '#sales', '#economy', '#marketing', '#socialmedia', '#startup', '#edtech', '#education', '#teachers',
+                 '#climate', '#solar', '#globalwarming', '#socialgood', '#cause', '#volunteer', '#4change']
+
+
 STOPWORDS = set(stopwords.words("english"))
 TAGS_TO_KEEP = ['NN', 'VB', 'JJ', 'RB']
-FREQ_THRESHOLD = 5
+FREQ_THRESHOLD = 10
 FREQ_LIST = []
 
 
 def write_file(data):
     home = expanduser("~")
     path_to_file = "/Desktop/NLP Project/"
-    #file_name = "training.csv"
-    file_name = "validation.csv"
+    file_name = "training.csv"
+    #file_name = "validation.csv"
     tweets = data.get_tweets()
     hashtags = data.get_hashtags()
     rows = [[tweets[i], hashtags[i]] for i in range(0, len(tweets))]
@@ -41,6 +46,10 @@ def remove_hashtags(tweet):
     for word in word_list:
         if not word.startswith('#'):
             words_to_keep.append(word)
+        '''
+        elif word not in HASHTAGS_LIST:
+            words_to_keep.append(word[1:])
+        '''
     return ' '.join(words_to_keep)
 
 
@@ -206,8 +215,8 @@ class Dataset:
     def __init__(self):
         home = expanduser("~")
         path_to_file = "/Desktop/NLP Project/"
-        #file_name = "tweets.csv"
-        file_name = "validation_tweets.csv"
+        file_name = "tweets.csv"
+        #file_name = "validation_tweets.csv"
         with open(home + path_to_file + file_name, 'rb') as f:
             for row in csv.reader(f, delimiter=',', quoting=csv.QUOTE_ALL):
                 self.tweets.append(row[0])

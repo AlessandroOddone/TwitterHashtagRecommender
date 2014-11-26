@@ -1,9 +1,9 @@
-import nltk
 from sklearn import metrics
 import csv
 import pickle
 from collections import defaultdict
 from os.path import expanduser
+from operator import itemgetter
 
 
 HASHTAGS_LIST = ['#dwts', '#glee', '#idol', '#xfactor', '#news', '#fashion', '#health', '#fail', '#jobs', '#business',
@@ -55,6 +55,8 @@ def extract_features(tweet):
 def evaluate_model(classifier, validation_set):
     y_true = []
     y_pred = []
+
+    #calculate the total accuracy of the model on validation data
     for i in range(len(validation_set)):
         y_true.append(validation_set[i][1])
         y_pred.append(classifier.classify(extract_features(validation_set[i][0])))
@@ -64,6 +66,23 @@ def evaluate_model(classifier, validation_set):
 
     total_accuracy = metrics.accuracy_score(y_true, y_pred)
     print("TOTAL ACCURACY: " + str(total_accuracy))
+    print('')
+
+    #calculate the total top3-accuracy of the model on validation data
+    correctly_classified = 0
+    for i in range(len(validation_set)):
+        dist = classifier.prob_classify(extract_features(validation_set[i][0]))
+        predicted_probs = []
+        for label in dist.samples():
+            predicted_probs.append((label, dist.prob(label)))
+        predicted_probs = sorted(predicted_probs, key=itemgetter(1), reverse=True)
+        #if the correct label is in the top3 of our classifier, count as correctly classified
+        for j in range(3):
+            if validation_set[i][1] in predicted_probs[j][0]:
+                print(correctly_classified)
+                correctly_classified += 1
+                break
+    print("TOP3 ACCURACY: " + str(float(correctly_classified)/float(len(validation_set))))
     print('')
 
     #calculate precision for each hashtag
