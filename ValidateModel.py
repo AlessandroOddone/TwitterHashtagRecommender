@@ -79,10 +79,9 @@ def evaluate_model(classifier, validation_set):
         #if the correct label is in the top3 of our classifier, count as correctly classified
         for j in range(3):
             if validation_set[i][1] in predicted_probs[j][0]:
-                print(correctly_classified)
                 correctly_classified += 1
                 break
-    print("TOP3 ACCURACY: " + str(float(correctly_classified)/float(len(validation_set))))
+    print("TOP3 TOTAL ACCURACY: " + str(float(correctly_classified)/float(len(validation_set))))
     print('')
 
     #calculate precision for each hashtag
@@ -99,6 +98,29 @@ def evaluate_model(classifier, validation_set):
             y_pred_h.append(classifier.classify(extract_features(validation_set_filtered[i][0])))
         precision_h = metrics.accuracy_score(y_true_h, y_pred_h)
         print('#' + hashtag + ': precision = ' + str(precision_h) +
+              ' (support = ' + str(len(validation_set_filtered)) + ')')
+        print('')
+
+    #calculate top3 precision for each hashtag
+    for hashtag in HASHTAGS_LIST:
+        hashtag = hashtag.replace('#', '')
+        validation_set_filtered = []
+        for row in validation_set:
+            if hashtag in row[1]:
+                validation_set_filtered.append(row)
+        for i in range(len(validation_set_filtered)):
+            dist = classifier.prob_classify(extract_features(validation_set_filtered[i][0]))
+            predicted_probs = []
+            for label in dist.samples():
+                predicted_probs.append((label, dist.prob(label)))
+            predicted_probs = sorted(predicted_probs, key=itemgetter(1), reverse=True)
+            #if the correct label is in the top3 of our classifier, count as correctly classified
+            correctly_classified = 0
+            for j in range(3):
+                if validation_set_filtered[i][1] in predicted_probs[j][0]:
+                    correctly_classified += 1
+                    break
+        print('#' + hashtag + ': top3 precision = ' + str(float(correctly_classified)/float(len(validation_set_filtered))) +
               ' (support = ' + str(len(validation_set_filtered)) + ')')
         print('')
 
