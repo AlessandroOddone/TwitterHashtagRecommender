@@ -44,8 +44,7 @@ def is_english(status):
 def add_to_database(status, hashtags):
     home = expanduser("~")
     path_to_file = "/Desktop/NLP Project/"
-    #file_name = "tweets.csv"
-    file_name = "validation_tweets.csv"
+    file_name = "new_tweets.csv"
     text = ' '.join(status.text.replace('\n', ' ').split()).encode('utf-8')
     rows = []
     for hashtag in hashtags:
@@ -70,6 +69,7 @@ class Listener(StreamListener):
 
 
 if __name__ == '__main__':
+    COUNT = 0
     auth = OAuthHandler(Auth.CONSUMER_KEY, Auth.CONSUMER_SECRET)
     auth.set_access_token(Auth.ACCESS_TOKEN, Auth.ACCESS_TOKEN_SECRET)
     stream = Stream(auth, Listener())

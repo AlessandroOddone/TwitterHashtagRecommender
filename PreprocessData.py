@@ -13,7 +13,8 @@ HASHTAGS_LIST = ['#dwts', '#glee', '#idol', '#xfactor', '#news', '#fashion', '#h
 
 STOPWORDS = set(stopwords.words("english"))
 TAGS_TO_KEEP = ['NN', 'VB', 'JJ', 'RB']
-FREQ_THRESHOLD = 10
+FREQ_THRESHOLD = 5
+FREQ_INTERVAL = 5000
 FREQ_LIST = []
 
 
@@ -97,24 +98,27 @@ def remove_multiple_spaces(tweet):
 
 
 #return true if a word appears in at least FREQ_THRESHOLD tweets, false otherwise
-def is_frequent(word, data):
+def is_frequent(word, data, index):
     tweets = data.get_tweets()
     count = 0
-    for tweet in tweets:
+    for i in range(index, FREQ_INTERVAL):
+        tweet = tweets[i]
         for w in tweet:
             if word == w:
                 count += 1
                 break
         if count >= FREQ_THRESHOLD:
             return True
+        if i >= (len(tweets) - 1):
+            break
     return False
 
 
 #return true if a word is frequent in the dataset, false otherwise
-def is_frequent_word(word, data):
+def is_frequent_word(word, data, index):
     if word in FREQ_LIST:
         return True
-    elif is_frequent(word, data):
+    elif is_frequent(word, data, index):
         FREQ_LIST.append(word)
         return True
     return False
@@ -159,13 +163,14 @@ def translate_slang(tweet):
 def pos_tag_filter(tweet, data, tagger):
     tagged_tweet = tagger.tag(word_tokenize(tweet))
     words_to_keep = []
-    for tagged_word in tagged_tweet:
+    for i in range(len(tagged_tweet)):
+        tagged_word = tagged_tweet[i]
         word = tagged_word[0]
         tag = tagged_word[1]
         if tag is not None:
             if tag_to_keep(tag):
                 words_to_keep.append(word)
-        elif is_frequent_word(word, data):
+        elif is_frequent_word(word, data, i):
                 words_to_keep.append(word.lower())
     return ' '.join(words_to_keep)
 
@@ -193,7 +198,10 @@ def process(data):
     t0 = AffixTagger(train=treebank.tagged_sents())
     t1 = UnigramTagger(train=treebank.tagged_sents(), backoff=t0)
     t2 = BigramTagger(train=treebank.tagged_sents(), backoff=t1)
+    count = 0
     for tweet in data.get_tweets():
+        count += 1
+        print count
         tweet = remove_hashtags(tweet)
         tweet = remove_user_tags(tweet)
         tweet = remove_html_entities(tweet)
@@ -215,8 +223,8 @@ class Dataset:
     def __init__(self):
         home = expanduser("~")
         path_to_file = "/Desktop/NLP Project/"
-        file_name = "tweets.csv"
-        #file_name = "validation_tweets.csv"
+        file_name = "training_original.csv"
+        #file_name = "validation_original.csv"
         with open(home + path_to_file + file_name, 'rb') as f:
             for row in csv.reader(f, delimiter=',', quoting=csv.QUOTE_ALL):
                 self.tweets.append(row[0])
